@@ -52,6 +52,7 @@ class SafetyMonitor:
         self.frame_count = 0
         self.violations_detected = 0
         self.violations_reported = 0
+        self.last_report_date = None
     
     def process_violation(self, frame, violation):
         """
@@ -81,10 +82,14 @@ class SafetyMonitor:
         print("📄 Creating PDF report...")
         pdf_path = self.pdf_generator.generate_pdf(violation, report_text, image_path)
         
-        # Send email notification
-        print("📧 Sending email notification...")
-        email_body = self.agent.generate_email_body(violation, pdf_path)
-        email_sent = self.email_sender.send_violation_alert(violation, pdf_path, email_body)
+        # Send email notification (Only if immediate mode is enabled)
+        email_sent = False
+        if config.EMAIL_REPORT_MODE == "immediate":
+            print("📧 Sending email notification...")
+            email_body = self.agent.generate_email_body(violation, pdf_path)
+            email_sent = self.email_sender.send_violation_alert(violation, pdf_path, email_body)
+        else:
+            print("📧 Email queued for daily summary.")
         
         # Log to database
         print("💾 Logging to database...")
@@ -96,8 +101,54 @@ class SafetyMonitor:
         print(f"   Report: {pdf_path}")
         if image_path:
             print(f"   Image: {image_path}")
-        print(f"   Email: {'Sent' if email_sent else 'Failed or Disabled'}\n")
-    
+        if config.EMAIL_REPORT_MODE == "immediate":
+            print(f"   Email: {'Sent' if email_sent else 'Failed or Disabled'}\n")
+        else:
+            print(f"   Email: Queued for {config.DAILY_REPORT_TIME}\n")
+
+    def check_and_send_daily_report(self):
+        """Check if it's time to send the daily report and send it if so"""
+        if config.EMAIL_REPORT_MODE != "daily":
+            return
+
+        now = datetime.now()
+        current_time = now.strftime("%H:%M")
+        
+        # Check if it's time to report and we haven't reported today yet
+        if current_time == config.DAILY_REPORT_TIME and self.last_report_date != now.date():
+            print(f"\n⏰ Time for daily report ({current_time})")
+            self.send_daily_report()
+            self.last_report_date = now.date()
+
+    def send_daily_report(self):
+        """Generate and send the daily summary report"""
+        print("\n" + "="*80)
+        print("📊 GENERATING DAILY SUMMARY REPORT")
+        print("="*80)
+        
+        # Get today's violations from database
+        today = datetime.now().date()
+        violations = self.database.get_violations_by_date(today)
+        
+        if not violations:
+            print("No violations detected today. Skipping report.")
+            return
+
+        print(f"Found {len(violations)} violations for today.")
+        
+        # Generate summary PDF
+        summary_pdf_path = self.pdf_generator.generate_summary_report(violations)
+        
+        # Send email
+        print("📧 Sending daily summary email...")
+        success = self.email_sender.send_daily_summary(summary_pdf_path, len(violations))
+        
+        if success:
+            print("✅ Daily summary sent successfully!")
+        else:
+            print("❌ Failed to send daily summary.")
+        print("="*80 + "\n")
+
     def run(self):
         """Start the safety monitoring system"""
         # Open video source
@@ -134,6 +185,9 @@ class SafetyMonitor:
                 if self.frame_count % config.FRAME_SKIP != 0:
                     continue
                 
+                # Check for daily report time
+                self.check_and_send_daily_report()
+
                 # Detect violations
                 violations = self.detector.detect_violations(frame)
                 

@@ -32,6 +32,10 @@ EMAIL_SENDER = os.getenv("EMAIL_SENDER", "")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")  # Use App Password for Gmail
 EMAIL_RECIPIENTS = os.getenv("EMAIL_RECIPIENTS", "").split(",")  # Comma-separated emails
 
+# Email Reporting Settings
+EMAIL_REPORT_MODE = "daily"  # Options: "immediate", "daily"
+DAILY_REPORT_TIME = "18:00"  # Time to send daily report (24h format)
+
 # Site Configuration
 SITE_NAME = "Construction Site A"
 SITE_LOCATION = "Zone 3, Building B"

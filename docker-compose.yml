@@ -1,0 +1,97 @@
+# ===================================================================
+# Docker Compose Configuration
+# Purpose: Local development and testing of microservices
+# Services: Detection Service, Agent Service, LocalStack (AWS mock)
+# ===================================================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Detection Service (Computer Vision)
+  # ============================================
+  detection-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.detection
+    container_name: safety-detection
+    environment:
+      - VIDEO_SOURCE=${VIDEO_SOURCE:-0}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - SQS_QUEUE_URL=${SQS_QUEUE_URL}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-safety-violations}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+    volumes:
+      - ./models:/app/models:ro
+      - ./violations:/app/violations
+      - /dev/video0:/dev/video0  # For webcam access (Linux only)
+    devices:
+      - /dev/video0:/dev/video0  # For webcam access (Linux only)
+    restart: unless-stopped
+    depends_on:
+      - localstack
+    networks:
+      - safety-network
+
+  # ============================================
+  # Agent Service (AI Reports)
+  # ============================================
+  agent-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.agent
+    container_name: safety-agent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - SQS_QUEUE_URL=${SQS_QUEUE_URL}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME:-safety-violations}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DB_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - EMAIL_ENABLED=${EMAIL_ENABLED:-true}
+      - EMAIL_SENDER=${EMAIL_SENDER}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - EMAIL_RECIPIENTS=${EMAIL_RECIPIENTS}
+      - SMTP_SERVER=${SMTP_SERVER:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+    volumes:
+      - ./reports:/app/reports
+      - ./violations:/app/violations:ro
+    restart: unless-stopped
+    depends_on:
+      - localstack
+    networks:
+      - safety-network
+
+  # ============================================
+  # LocalStack (AWS Services Mock)
+  # For local testing of SQS, S3, etc.
+  # ============================================
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack-aws
+    ports:
+      - "4566:4566"  # LocalStack gateway
+      - "4571:4571"  # S3
+    environment:
+      - SERVICES=sqs,s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "./localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - safety-network
+
+networks:
+  safety-network:
+    driver: bridge
+
+volumes:
+  localstack-data:

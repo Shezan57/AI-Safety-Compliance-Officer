@@ -1,8 +1,9 @@
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
 from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib import colors
 from datetime import datetime
 import config
 import os
@@ -183,6 +184,50 @@ class PDFGenerator:
         for vtype, count in violation_types.items():
             line = f"• {vtype.replace('_', ' ').title()}: {count}"
             elements.append(Paragraph(line, self.body_style))
+            
+        elements.append(Spacer(1, 0.3*inch))
+
+        # Detailed Table of Violations
+        if violations_list:
+            elements.append(Paragraph("DETAILED VIOLATION LOG", self.heading_style))
+            
+            # Table Header
+            data = [['Time', 'Type', 'Description', 'Confidence']]
+            
+            # Table Data
+            for v in violations_list:
+                # Handle both dictionary and database object
+                if isinstance(v, dict):
+                    ts = v['timestamp']
+                    cls_name = v['class_name']
+                    desc = v['description']
+                    conf = v['confidence']
+                else:
+                    ts = v.timestamp
+                    cls_name = v.class_name
+                    desc = v.description
+                    conf = v.confidence
+
+                data.append([
+                    ts.strftime('%H:%M:%S'),
+                    cls_name.replace('_', ' ').title(),
+                    desc[:40] + "..." if len(desc) > 40 else desc,
+                    f"{conf*100:.1f}%"
+                ])
+
+            # Create Table
+            t = Table(data, colWidths=[1.2*inch, 1.5*inch, 3.0*inch, 1.0*inch])
+            t.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ]))
+            elements.append(t)
         
         # Build PDF
         doc.build(elements)
