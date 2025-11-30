@@ -107,7 +107,7 @@ class PDFGenerator:
         elements.append(Spacer(1, 0.3*inch))
         
         # Add violation image
-        if os.path.exists(image_path):
+        if image_path and os.path.exists(image_path):
             elements.append(Paragraph("VIOLATION EVIDENCE", self.heading_style))
             
             # Resize image to fit page

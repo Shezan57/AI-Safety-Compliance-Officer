@@ -136,3 +136,51 @@ This is an automated notification from the AI Safety Compliance Officer system.
         except Exception as e:
             print(f"Error sending daily summary: {e}")
             return False
+    
+    def send_email(self, subject, body, attachments=None):
+        """
+        Send a generic email (useful for testing)
+        
+        Args:
+            subject: Email subject line
+            body: Email body text
+            attachments: Optional list of file paths to attach
+            
+        Returns:
+            Boolean indicating success
+        """
+        if not config.EMAIL_ENABLED or not config.EMAIL_RECIPIENTS:
+            print("Email not configured")
+            return False
+        
+        try:
+            msg = MIMEMultipart()
+            msg['From'] = config.EMAIL_SENDER
+            msg['To'] = ', '.join(config.EMAIL_RECIPIENTS)
+            msg['Subject'] = subject
+            
+            # Add body
+            msg.attach(MIMEText(body, 'plain'))
+            
+            # Add attachments if provided
+            if attachments:
+                for filepath in attachments:
+                    if os.path.exists(filepath):
+                        with open(filepath, 'rb') as f:
+                            attachment = MIMEApplication(f.read())
+                            attachment.add_header('Content-Disposition', 'attachment', 
+                                                filename=os.path.basename(filepath))
+                            msg.attach(attachment)
+            
+            # Send
+            server = smtplib.SMTP(config.SMTP_SERVER, config.SMTP_PORT)
+            server.starttls()
+            server.login(config.EMAIL_SENDER, config.EMAIL_PASSWORD)
+            server.send_message(msg)
+            server.quit()
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return False
