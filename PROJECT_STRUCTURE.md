@@ -7,7 +7,7 @@ AI Safety Compliance Officer/
 │
 ├── 📄 Core Application Files (6 modules)
 │   ├── safety_monitor.py          # Main monitoring application (entry point)
-│   ├── violation_detector.py      # YOLOv8 detection wrapper
+│   ├── violation_detector.py      # YOLOv11n detection wrapper
 │   ├── compliance_agent.py        # LangChain AI agent for reports
 │   ├── pdf_generator.py          # PDF report generation
 │   ├── email_sender.py           # Email notification system
@@ -41,7 +41,7 @@ AI Safety Compliance Officer/
 │
 ├── 🤖 AI Models
 │   └── models/
-│       └── best.onnx             # YOLOv8 PPE detection model (ONNX format)
+│       └── best.onnx             # Custom YOLOv11n PPE detection model (ONNX format)
 │
 ├── 📊 Output Directories
 │   ├── reports/                  # Generated PDF and TXT reports
@@ -89,7 +89,7 @@ python safety_monitor.py --source rtsp://...     # RTSP stream
 ---
 
 ### **2. violation_detector.py** - Computer Vision
-**Purpose:** YOLOv8 wrapper for PPE detection
+**Purpose:** YOLOv11n wrapper for PPE detection
 
 **Features:**
 - ONNX model inference
@@ -237,7 +237,7 @@ CREATE TABLE violations (
 ┌────────────────────────┐    ┌─────────────────────────────┐
 │  VIOLATION_DETECTOR.PY │    │     PERFORMANCE TRACKING    │
 │   (Computer Vision)     │    │   • FPS calculation         │
-│  • YOLOv8 inference    │    │   • Detection time stats    │
+│  • YOLOv11n inference  │    │   • Detection time stats    │
 │  • Frame optimization   │    │   • Resource monitoring     │
 │  • Bounding boxes      │    └─────────────────────────────┘
 └────────────┬───────────┘
@@ -334,7 +334,7 @@ EMAIL_RECIPIENTS=recipient@example.com
 ## 📦 Dependencies
 
 ### Core AI & ML
-- `ultralytics` - YOLOv8 framework
+- `ultralytics` - YOLOv11n framework
 - `onnx` + `onnxruntime` - Model inference
 - `opencv-python` - Video processing
 - `langchain` + `langchain-openai` - AI agent

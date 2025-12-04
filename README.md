@@ -1,7 +1,7 @@
 # AI Safety Compliance Officer (Construction Tech)
 
 ## Overview
-An automated safety compliance system that monitors construction sites via CCTV, detects PPE violations using YOLOv8, and automatically generates OSHA-compliant incident reports.
+An automated safety compliance system that monitors construction sites via CCTV, detects PPE violations using YOLOv11n (custom-trained), and automatically generates OSHA-compliant incident reports.
 
 ## Problem Statement
 Small construction firms struggle with safety compliance paperwork:
@@ -12,8 +12,8 @@ Small construction firms struggle with safety compliance paperwork:
 
 ## Solution
 Automated safety monitoring with intelligent report generation:
-1. **Vision Layer**: YOLOv8 detects PPE violations in real-time
-2. **Agent Layer**: LangChain + LLM generates formal compliance reports
+1. **Vision Layer**: Custom-trained YOLOv11n detects PPE violations in real-time
+2. **Agent Layer**: LangChain + GPT-4 generates formal compliance reports
 3. **Action Layer**: Automated email delivery to site managers
 
 ## Features
@@ -25,7 +25,7 @@ Automated safety monitoring with intelligent report generation:
 - ✅ Violation history tracking
 
 ## Tech Stack
-- **Computer Vision**: YOLOv8 (ONNX)
+- **Computer Vision**: YOLOv11n (custom-trained, exported to ONNX for inference)
 - **AI Agent**: LangChain + OpenAI GPT-4
 - **PDF Generation**: ReportLab
 - **Email**: SMTP (Gmail/Outlook)
@@ -85,7 +85,7 @@ python app.py
 
 1. **Detection Phase**
    - CCTV feed analyzed frame-by-frame
-   - YOLOv8 identifies workers and PPE items
+   - Custom-trained YOLOv11n identifies workers and PPE items
    - Violations logged with timestamp and screenshot
 
 2. **Agent Phase**

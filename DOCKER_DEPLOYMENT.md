@@ -15,7 +15,7 @@ This guide explains how to deploy the AI Safety Compliance Officer as **microser
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                  Detection Service Container                     │
-│  • YOLOv8 Computer Vision                                        │
+│  • YOLOv11n Computer Vision                                     │
 │  • Detects PPE violations                                        │
 │  • Uploads images to S3                                          │
 │  • Sends messages to SQS Queue                                   │

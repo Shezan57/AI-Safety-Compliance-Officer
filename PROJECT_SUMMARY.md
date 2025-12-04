@@ -2,7 +2,7 @@
 
 ## 🎯 Project Overview
 
-**The AI Safety Compliance Officer** is an intelligent construction site monitoring system that automatically detects PPE (Personal Protective Equipment) violations and generates OSHA-compliant incident reports using AI.
+**The AI Safety Compliance Officer** is an intelligent construction site monitoring system that automatically detects PPE (Personal Protective Equipment) violations using a custom-trained YOLOv11n model and generates OSHA-compliant incident reports using AI.
 
 ## 💡 The Problem It Solves
 
@@ -16,11 +16,13 @@ Small construction firms face significant challenges:
 
 A three-layer automated system:
 
-### 1. Vision Layer (YOLOv8)
+### 1. Vision Layer (YOLOv11n - Custom Trained)
 - Real-time CCTV monitoring
+- Custom-trained YOLOv11n model for PPE detection
 - Detects PPE violations: helmets, vests, goggles, gloves, boots
 - High-confidence detection with bounding boxes
 - Automatic screenshot capture
+- Exported to ONNX format for optimized inference
 
 ### 2. Agent Layer (LangChain + GPT-4)
 - AI-powered report generation
@@ -38,7 +40,7 @@ A three-layer automated system:
 ## 🏗️ Architecture
 
 ```
-CCTV Feed → YOLOv8 Detection → Violation Found?
+CCTV Feed → YOLOv11n Detection → Violation Found?
                                       ↓ YES
                            LangChain AI Agent
                                       ↓
@@ -65,14 +67,14 @@ AI Safety Compliance Officer/
 ├── test_system.py             # System tests
 │
 ├── safety_monitor.py          # 🎯 Main application
-├── violation_detector.py      # YOLOv8 wrapper
+├── violation_detector.py      # YOLOv11n wrapper
 ├── compliance_agent.py        # LangChain AI agent
 ├── pdf_generator.py           # PDF creation
 ├── email_sender.py            # Email notifications
 ├── database.py                # SQLite ORM
 │
 ├── models/                    # YOLO models
-│   └── best.onnx             # PPE detection model
+│   └── best.onnx             # Custom-trained YOLOv11n (PPE detection)
 │
 ├── reports/                   # Generated PDFs
 ├── violations/                # Violation screenshots
@@ -83,7 +85,7 @@ AI Safety Compliance Officer/
 
 | Component | Technology | Purpose |
 |-----------|-----------|---------|
-| Computer Vision | YOLOv8 (ONNX) | Real-time object detection |
+| Computer Vision | YOLOv11n (ONNX) | Custom-trained real-time PPE detection |
 | AI Agent | LangChain + OpenAI GPT-4 | Natural language report generation |
 | PDF Generation | ReportLab | Professional document creation |
 | Email | SMTP (Gmail/Outlook) | Automated notifications |
@@ -224,7 +226,7 @@ python safety_monitor.py --source test_video.mp4
 
 1. **Problem**: "Small construction firms get fined $1000s because they can't keep up with safety paperwork"
 2. **Solution**: "AI watches your CCTV and writes the reports for you"
-3. **Tech**: "YOLOv8 + GPT-4 + Automation"
+3. **Tech**: "YOLOv11n + GPT-4 + Automation"
 4. **Market**: "$5B+ construction safety software market"
 5. **Traction**: "Working prototype, ready for pilot customers"
 

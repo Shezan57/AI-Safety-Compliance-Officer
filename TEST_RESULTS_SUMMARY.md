@@ -11,7 +11,7 @@
 | Test | Status | Duration | Notes |
 |------|--------|----------|-------|
 | 🗄️ Database Operations | ✅ PASSED | ~10s | CRUD operations working |
-| 👁️ Violation Detector | ✅ PASSED | ~10s | YOLOv8 detection working |
+| 👁️ Violation Detector | ✅ PASSED | ~10s | YOLOv11n detection working |
 | 🤖 AI Compliance Agent | ✅ PASSED | ~10s | GPT-4 reports generated |
 | 📄 PDF Generator | ✅ PASSED | ~10s | PDF reports created |
 | 📧 Email Sender | ✅ PASSED | ~10s | Email alerts working |
@@ -23,7 +23,7 @@
 ## ✅ System Validation
 
 ### Core Components Verified:
-- ✅ **YOLOv8 Model**: Loaded and detecting violations
+- ✅ **YOLOv11n Model**: Loaded and detecting violations
 - ✅ **GPT-4 Integration**: Generating compliance reports
 - ✅ **Database**: SQLite storing all records
 - ✅ **PDF Generation**: Creating detailed reports
@@ -73,7 +73,7 @@ violations.db
 - **Files:** `violations.db` created and populated
 
 ### 2. Violation Detector ✅
-- **Tested:** YOLOv8 model loading, webcam detection, bounding boxes
+- **Tested:** YOLOv11n model loading, webcam detection, bounding boxes
 - **Result:** Successfully detected PPE violations in real-time
 - **Model:** `models/best.onnx` loaded with 11 classes
 - **Classes Detected:** helmet, gloves, vest, boots, goggles, no_helmet, no_gloves, etc.
@@ -117,7 +117,7 @@ violations.db
 ## 🎯 Key Features Validated
 
 ### Computer Vision Pipeline:
-- ✅ YOLOv8 ONNX model inference
+- ✅ YOLOv11n ONNX model inference
 - ✅ Real-time video processing (webcam/RTSP)
 - ✅ Violation detection with confidence scores
 - ✅ Bounding box drawing and visualization

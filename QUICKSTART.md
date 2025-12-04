@@ -36,11 +36,13 @@ EMAIL_RECIPIENTS=manager@company.com,safety@company.com
 3. Copy and paste into `.env` (not your regular password!)
 
 ### 4. Copy Model
-Copy your PPE detection model:
+Copy your custom-trained YOLOv11n PPE detection model:
 ```bash
-# Copy from parent project
-copy "..\YOLOv8 safety kit detection for construction site\YOLO-Weights\best.onnx" "models\best.onnx"
+# Copy from training project
+copy "..\YOLOv11-PPE-Training\runs\detect\train\weights\best.onnx" "models\best.onnx"
 ```
+
+**Note:** The model should be in ONNX format for optimized inference.
 
 ## Usage
 
@@ -71,7 +73,7 @@ python safety_monitor.py --config
 
 ## How It Works
 
-1. **Detection**: YOLOv8 analyzes CCTV frames for PPE violations
+1. **Detection**: Custom YOLOv11n analyzes CCTV frames for PPE violations
 2. **AI Report**: GPT-4 generates OSHA-compliant incident report
 3. **PDF Creation**: Professional PDF report with evidence screenshot
 4. **Email Alert**: Automatic notification to site managers
