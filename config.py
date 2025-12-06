@@ -33,7 +33,7 @@ EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")  # Use App Password for Gmail
 EMAIL_RECIPIENTS = os.getenv("EMAIL_RECIPIENTS", "").split(",")  # Comma-separated emails
 
 # Email Reporting Settings
-EMAIL_REPORT_MODE = "daily"  # Options: "immediate", "daily"
+EMAIL_REPORT_MODE = "immediate"  # Options: "immediate", "daily" - CHANGED TO IMMEDIATE FOR SUPERVISOR DEMO
 DAILY_REPORT_TIME = "18:00"  # Time to send daily report (24h format)
 
 # Site Configuration
@@ -42,15 +42,14 @@ SITE_LOCATION = "Zone 3, Building B"
 COMPANY_NAME = "Your Construction Company"
 
 # Detection Configuration
-CONFIDENCE_THRESHOLD = 0.5  # Minimum confidence for violation detection
+CONFIDENCE_THRESHOLD = 0.25  # Minimum confidence for violation detection - LOWERED to 0.25 to capture all no_helmet violations (range 0.31-0.42)
 MODEL_PATH = "models/best.onnx"
 VIDEO_SOURCE = 0  # 0 for webcam, or path to video file, or RTSP URL
 
-# Violation Classes (what to monitor)
+# Violation Classes (what to monitor) - MUST MATCH MODEL CLASS NAMES
 VIOLATION_CLASSES = {
     "no_helmet": "Worker without hard hat/helmet",
-    "no_vest": "Worker without safety vest",
-    "no_goggles": "Worker without safety goggles",
+    "no_goggle": "Worker without safety goggles",  # Note: model uses singular 'goggle'
     "no_gloves": "Worker without safety gloves",
     "no_boots": "Worker without safety boots"
 }
@@ -58,8 +57,7 @@ VIOLATION_CLASSES = {
 # OSHA Regulations Mapping
 OSHA_REGULATIONS = {
     "no_helmet": "29 CFR 1926.100(a) - Head Protection",
-    "no_vest": "29 CFR 1926.201 - High-Visibility Safety Apparel",
-    "no_goggles": "29 CFR 1926.102 - Eye and Face Protection",
+    "no_goggle": "29 CFR 1926.102 - Eye and Face Protection",  # Match model class name
     "no_gloves": "29 CFR 1926.95 - Hand Protection",
     "no_boots": "29 CFR 1926.96 - Foot Protection"
 }
@@ -70,9 +68,12 @@ VIOLATIONS_DIR = "violations"
 DATABASE_PATH = "violations.db"
 
 # Detection Settings
-FRAME_SKIP = 30  # Process every Nth frame for performance (higher = faster, but may miss violations)
-VIOLATION_COOLDOWN = 300  # Seconds before same violation can be reported again
+FRAME_SKIP = 1  # Process EVERY frame for short demo video - normally 30 for production
+VIOLATION_COOLDOWN = 0  # Seconds before same violation can be reported again - SET TO 0 FOR DEMO (reports every violation)
 SAVE_VIOLATION_IMAGES = True
+
+# Note: FRAME_SKIP=1 checks all frames in 9-second video for maximum violation capture
+#       For production with continuous video, increase to 30 for better performance
 
 # CPU Optimization Settings (for systems without GPU)
 RESIZE_FRAME = True  # Resize frames before detection for speed

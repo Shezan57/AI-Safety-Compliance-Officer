@@ -18,7 +18,7 @@ try:
     required = {
         'EMAIL_SENDER': os.getenv('EMAIL_SENDER'),
         'EMAIL_PASSWORD': os.getenv('EMAIL_PASSWORD'),
-        'EMAIL_RECIPIENT': os.getenv('EMAIL_RECIPIENT')
+        'EMAIL_RECIPIENTS': os.getenv('EMAIL_RECIPIENTS')
     }
     
     missing = [k for k, v in required.items() if not v]
@@ -29,13 +29,13 @@ try:
         print("\nTo enable email testing, add these to your .env file:")
         print("  EMAIL_SENDER=your-email@gmail.com")
         print("  EMAIL_PASSWORD=your-app-password")
-        print("  EMAIL_RECIPIENT=recipient@email.com")
+        print("  EMAIL_RECIPIENTS=recipient@email.com")
         print("\n📖 See EMAIL_SETUP.md for detailed instructions")
         exit(0)
     
     print("✅ All email configuration found")
     print(f"✅ Sender: {required['EMAIL_SENDER']}")
-    print(f"✅ Recipient: {required['EMAIL_RECIPIENT']}")
+    print(f"✅ Recipients: {required['EMAIL_RECIPIENTS']}")
     print(f"✅ Password: {'*' * len(required['EMAIL_PASSWORD'])}")
     
     # Initialize sender
@@ -67,7 +67,7 @@ You're ready for production deployment! 🚀
 
 Test Details:
 - Sender: {sender}
-- Recipient: {recipient}
+- Recipients: {recipients}
 - Timestamp: {timestamp}
 
 Next Steps:
@@ -80,7 +80,7 @@ AI Safety Compliance Officer
 Automated Construction Site Monitoring
         """.format(
             sender=required['EMAIL_SENDER'],
-            recipient=required['EMAIL_RECIPIENT'],
+            recipients=required['EMAIL_RECIPIENTS'],
             timestamp=__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         ),
         attachments=None
@@ -88,7 +88,7 @@ Automated Construction Site Monitoring
     
     print("\n" + "="*80)
     print("✅ Email sent successfully!")
-    print(f"✅ Check your inbox: {required['EMAIL_RECIPIENT']}")
+    print(f"✅ Check your inbox: {required['EMAIL_RECIPIENTS']}")
     print("✅ (Check spam folder if not in inbox)")
     print("\n✅ Email Tests PASSED!")
     print("="*80)
